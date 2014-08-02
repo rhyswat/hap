@@ -6,7 +6,7 @@ MIDI = {:c=>60, :d=>62, :e=>64, :g=>67, :a=>69, :c2=>72}
 NOTES = MIDI.length
 
 # markov probability chain
-mk = Markov.new()
+mk = Markov.new(34565)
 # C > D or E
 mk.assign(:c, :d=>0.4, :e=>0.6)
 # D > any but D equally
