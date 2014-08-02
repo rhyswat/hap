@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# The sonic pi system can't 'require_relative' so we have to
+# concatenate everything into a single file, stripping out
+# all commands that sonic pi can't tolerate.
+# So this concatenates all files provided on the command line
+# through a filter to an output.
+
+TARGET=out.spi
+cat $@ | grep -v require_relative > $TARGET
+echo Concatenated to $TARGET
