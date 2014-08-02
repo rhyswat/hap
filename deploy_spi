@@ -6,6 +6,14 @@
 # So this concatenates all files provided on the command line
 # through a filter to an output.
 
+if [[ "$#" -eq 0 ]]
+then
+  echo Please give me some files to concatenate
+  exit 1
+fi
+
 TARGET=out.spi
 cat $@ | grep -v require_relative > $TARGET
-echo Concatenated to $TARGET
+echo Concatenated to ${TARGET}, copying to pi...
+scp $TARGET pi@pi:~pi/.sonic-pi/workspaces/default/two/1.spi
+echo Done.
