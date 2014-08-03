@@ -3,19 +3,16 @@
 Cerddoriaeth ar hap drwy Sonic Pi (a phethau eraill)
 
 ## Seiliau
+Cyffredinol:
 * Ruby 1.9+
 * Sonic Pi
   * http://www.cl.cam.ac.uk/projects/raspberrypi/sonicpi/
-* Ruby midilib
-````
-gem install midilib
-````
+* Ruby midilib drwy `$ gem install midilib`
  neu https://github.com/jimm/midilib
  neu https://github.com/rhyswat/midilib
-* timididy, lame, mpg123
-````
-apt-get install timidity lame mpg123
-````
+
+Ar y Pi:
+* timididy, lame, mpg123 drwy `$ apt-get install timidity lame mpg123`
 
 ## Cyfansoddi
 Dyma'r camau:
