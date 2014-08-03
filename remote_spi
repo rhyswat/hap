@@ -12,5 +12,6 @@ fi
 
 TARGET=out.spi
 cat repl_support.rb $@ | grep -v sonic_stub > $TARGET
-cp $TARGET ~pi/.sonic-pi/workspaces/default/one/1.spi
+echo Concatenated to ${TARGET}, copying to pi...
+scp $TARGET pi@pi:~pi/.sonic-pi/workspaces/default/two/1.spi
 echo Done.
