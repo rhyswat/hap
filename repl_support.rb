@@ -1,10 +1,9 @@
 # ----------------------------------------------------------------------
 # Add in-repl support for 'include' and 'require_relative'
-# which the sonic-pi REPL cannot seem to handle
-
+# which the sonic-pi REPL cannot seem to handle.
 class REPLSupport
 
-  @@BASEPATH = File.dirname(__FILE__)
+  @@BASEPATH = File.expand_path(File.dirname(__FILE__))
 
   # allow 'include' to be called at the class (not instance) level
   def self.inc(mod)
@@ -29,6 +28,3 @@ end
 
 # END repl-support 
 # ----------------------------------------------------------------------
-
-
-

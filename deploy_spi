@@ -11,6 +11,22 @@ then
 fi
 
 TARGET=out.spi
+DEST=~pi/.sonic-pi/workspaces/default/one
+
+# clear dest
+rm -f ${DEST}/*.*
+
+# Concatenate two ruby scripts
 cat repl_support.rb $@ | grep -v sonic_stub > $TARGET
-cp $TARGET ~pi/.sonic-pi/workspaces/default/one/1.spi
+
+# Copy the result and its require_local dependencies:
+# The insane chain of pipes does the following:
+# cat the input | ignore sonic_stub | get the require_relative statements | print the files required| strip quotes (both kinds)
+cp -v $TARGET ${DEST}/1.spi
+for f in `cat $@ | grep -v sonic_stub | grep -e "^require_relative" | awk '{print $2}' | sed "s/'//g" | sed "s/\"//g" `
+do
+ cp -v ${f}.rb ${DEST}
+done
+ls -ltr ${DEST}
+
 echo Done.
