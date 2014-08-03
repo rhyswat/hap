@@ -23,5 +23,5 @@ Dyma'r camau:
 3. (I'w sgwennu - creu ffeil MIDI o'r allbwn)
 
 4. Allforio o MIDI i MP3 drwy `$ timidity -Ow -o - input.mid | lame - output.mp3`
-   Tybied mai O-am-Owen yw'r ddau opsiwn, nid 0-am-ddim.
-   (Diolch i https://www.kirsle.net/blog/entry/convert-midi-music-to-mp3)
+ Tybied mai O-am-Owen yw'r ddau opsiwn, nid 0-am-ddim.
+ (Diolch i https://www.kirsle.net/blog/entry/convert-midi-music-to-mp3)
