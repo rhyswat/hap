@@ -1,24 +1,31 @@
+require 'set'
 require 'docile'
 
 module Config
 
     #
-    # DSL helpers
+    # DSL helper
     # -----------------------------------------------------------------
-    def self.part(&block)
-        Docile.dsl_eval(PartBuilder.new, &block).build
-    end
+    class ConfigReader
+        def self.part(&block)
+            Docile.dsl_eval(PartBuilder.new, &block).build
+        end
+    
+        def self.clip(&block)
+            Docile.dsl_eval(ClipBuilder.new, &block).build
+        end
+    
+        def self.event(&block)
+            Docile.dsl_eval(EventBuilder.new, &block).build
+        end
+    
+        def self.transition(&block)
+            Docile.dsl_eval(TransitionBuilder.new, &block).build
+        end
 
-    def self.clip(&block)
-        Docile.dsl_eval(ClipBuilder.new, &block).build
-    end
-
-    def self.event(&block)
-        Docile.dsl_eval(EventBuilder.new, &block).build
-    end
-
-    def self.transition(&block)
-        Docile.dsl_eval(TransitionBuilder.new, &block).build
+        def self.get_binding
+            return binding
+        end
     end
 
     #
@@ -33,13 +40,13 @@ module Config
         def tempo(v) @part.tempo = v.to_i; self; end
 
         def clip(&block)
-            c = Config.clip(&block)
+            c = ConfigReader.clip(&block)
             @part.clips[c.label] = c
             self
         end
 
         def transition(&block)
-            @part.transitions << Config.transition(&block)
+            @part.transitions << ConfigReader.transition(&block)
             self
         end
 
@@ -59,7 +66,7 @@ module Config
         end
 
         def event(&block)
-            @clip.events << Config.event(&block)
+            @clip.events << ConfigReader.event(&block)
             self
         end
 
@@ -107,6 +114,40 @@ module Config
             @tempo = 90
             @clips = {}
             @transitions = []
+        end
+
+        def valid?
+            errors.empty?
+        end
+
+        def errors
+            error_list = []
+
+            # empty part is useless
+            error_list << "Empty part" if @clips.empty? && @transitions.empty?
+
+            # have a tempo & title
+            error_list << "Invalid tempo: #{@tempo}" unless @tempo > 0
+            error_list << "Untitled part" if @title.nil? || @title.length == 0
+
+            # transitions from x -> * sum to 1
+            tx = @transitions.reduce({}) do |store, transition|
+                store[transition.from] = 0 unless store.include? transition.from
+                store[transition.from] = store[transition.from] + transition.probability
+                store
+            end
+            tx.select { |k,v| v < 0.9999}.each { |k,v| error_list << "Transitions for #{k} sum to #{v}"}
+
+            # clips are all used
+            froms = Set.new @transitions.map {|t| t.from }
+            tos = Set.new @transitions.map {|t| t.to }
+            clip_keys = Set.new @clips.keys
+            unused_clips = (clip_keys - froms) - tos
+            unused_clips.each { |c| error_list << "Unused clip #{c}" }
+            (froms - clip_keys).each  { |c| error_list << "Transition 'from' without clip: #{c}" }
+            (tos - clip_keys).each  { |c| error_list << "Transition 'to' without clip: #{c}" }
+
+            error_list
         end
     end
 
