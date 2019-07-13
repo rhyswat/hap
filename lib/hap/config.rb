@@ -1,7 +1,7 @@
 require 'set'
 require 'docile'
 
-module Config
+module Hap
 
     #
     # DSL helper
@@ -42,6 +42,7 @@ module Config
 
         def title(v) @piece.title = v; self; end
         def tempo(v) @piece.tempo = v.to_i; self; end
+        def repetitions(v) @piece.repetitions = v.to_i; self; end
         def seed(v) @piece.seed = v.to_i; self; end
 
         def part(&block)
@@ -129,11 +130,12 @@ module Config
     # DSL components
     # -----------------------------------------------------------------
     class Piece
-        attr_accessor :title, :tempo, :seed, :parts
+        attr_accessor :title, :tempo, :repetitions, :seed, :parts
 
         def initialize
             @title = 'untitled'
-            @tempo = 90
+            @tempo = 90 # beats per minute
+            @repetitions = 0 # there will be this many clips in the output
             @seed = nil # or a random number seed
             @parts = []
         end

@@ -3,10 +3,15 @@
 module Markov
   # One-step Markov model
   class Chain
-    def initialize(seed = Random.new_seed)
+    def initialize(seed = nil)
+      seed = Random.new_seed if seed.nil?
       # a hash of {:x => [[:y,p_y], [:z, p_z], ...]} increasing by p_*
       @weights = {}
       @random = Random.new(seed)
+    end
+
+    def clear!
+      @weights.clear
     end
 
     # Assigns all symbols in 'nodes' to be equally likely after 'x'
@@ -19,7 +24,7 @@ module Markov
     # The given weights must sum to one.
     # If a symbol is not given then in effect its weight is zero.
     def assign(node, weights)
-      sum = weights.inject(0) { |s, (_k, v)| s + v }
+      sum = weights.inject(0.0) { |s, (_k, v)| s + v }
       if (sum - 1.0).abs > 1e-6
         raise ArgumentError, "Weights do not sum to 1: #{w.inspect}"
       end

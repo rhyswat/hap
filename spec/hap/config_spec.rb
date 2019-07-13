@@ -1,6 +1,7 @@
-require_relative "../lib/config"
+require_relative "../../lib/hap/config"
 
-module Config
+module Hap
+
     describe 'Config' do
         context 'Code first' do
             it 'returns a blank part with empty configuration' do
@@ -74,7 +75,7 @@ module Config
 
         context 'Config first' do
             it 'returns a blank part with empty configuration' do
-                src = File.join(__dir__, 'data', 'empty_part.rb')
+                src = File.join(__dir__, '..', 'data', 'empty_part.rb')
                 data = File.open(src).read
                 part = eval(data, ConfigReader.get_binding)
 
@@ -85,7 +86,7 @@ module Config
             end
 
             it 'populates a part from configuration' do
-                src = File.join(__dir__, 'data', 'complete_part.rb')
+                src = File.join(__dir__, '..', 'data', 'complete_part.rb')
                 data = File.open(src).read
                 part = eval(data, ConfigReader.get_binding)
                 
@@ -106,7 +107,7 @@ module Config
             end
 
             it 'reads an empty piece' do
-                src = File.join(__dir__, 'data', 'empty_piece.rb')
+                src = File.join(__dir__, '..', 'data', 'empty_piece.rb')
                 data = File.open(src).read
                 piece = eval(data, ConfigReader.get_binding)
 
@@ -118,7 +119,7 @@ module Config
             end
 
             it 'reads a complete piece' do
-                src = File.join(__dir__, 'data', 'complete_piece.rb')
+                src = File.join(__dir__, '..', 'data', 'complete_piece.rb')
                 data = File.open(src).read
                 piece = eval(data, ConfigReader.get_binding)
 

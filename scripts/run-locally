@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+# Run from local lib, not the installed bin/ script
+DIR = File.dirname(__FILE__)
+LIB = File.join(DIR, '..', 'lib', 'hap.rb')
+require LIB
+
+Hap.main *ARGV

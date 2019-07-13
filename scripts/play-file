@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function die {
+    echo "$@"
+    exit 1
+}
+
+VLC=/Applications/VLC.app/Contents/MacOS/VLC
+[[ -e "$VLC" ]] || die "Tell me where vlc is installed"
+
+[[ $# < 2 ]] || die "Please give me a midi file"
+
+[[ -e "$1" ]] || die "MIDI file '$1' not found"
+
+"$VLC" -I rc --quiet "$1" vlc://quit

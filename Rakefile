@@ -17,4 +17,3 @@ task :install => [:spec, :build] do
     system "gem uninstall --force --all --executables hap"
     system "gem install hap"
 end
-

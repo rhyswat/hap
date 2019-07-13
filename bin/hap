@@ -1,8 +1,11 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
 require 'hap'
 
-main = Hap::Hap.new
-main.convert_to_midi('test.md')
-
+begin
+    Hap.main *ARGV
+rescue => exception
+    puts exception
+    puts ""
+    Hap.usage File.basename(__FILE__)
+end
