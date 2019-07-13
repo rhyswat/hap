@@ -5,3 +5,4 @@ require 'hap'
 
 main = Hap::Hap.new
 main.convert_to_midi('test.md')
+

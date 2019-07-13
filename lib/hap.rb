@@ -10,6 +10,7 @@ module Hap
     @config = nil
 
     def initialize
+      puts 'Hap hap hooray'
     end
 
     def load(src)
