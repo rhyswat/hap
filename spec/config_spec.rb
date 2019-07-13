@@ -6,20 +6,18 @@ module Config
             it 'returns a blank part with empty configuration' do
                 part = ConfigReader.part { }
 
-                expect(part.title).to eql 'untitled'
+                expect(part.name).to eql 'untitled'
                 expect(part.clips).to be_empty
                 expect(part.transitions).to be_empty
             end
 
             it 'accepts simple parameters' do
                 part = ConfigReader.part {
-                    title 'Wombat'
-                    tempo 100
+                    name 'Wombat'
                 }
 
                 expect(part.valid?).to be false
-                expect(part.title).to eql 'Wombat'
-                expect(part.tempo).to eql 100
+                expect(part.name).to eql 'Wombat'
             end
 
             it 'accepts a list of clips' do
@@ -81,7 +79,7 @@ module Config
                 part = eval(data, ConfigReader.get_binding)
 
                 expect(part.valid?).to be false
-                expect(part.title).to eql 'untitled'
+                expect(part.name).to eql 'untitled'
                 expect(part.clips).to be_empty
                 expect(part.transitions).to be_empty
             end
@@ -92,11 +90,45 @@ module Config
                 part = eval(data, ConfigReader.get_binding)
                 
                 expect(part.valid?).to be true
-                expect(part.title).to eql 'Part #7'
-                expect(part.tempo).to eql 120
+                expect(part.name).to eql 'Part #7'
                 expect(part.clips.length).to eql 2
                 expect(part.transitions.length).to eql 4
             end
         end
+
+        context 'Piece' do
+            it 'recognises an invalid piece' do
+                piece = Piece.new
+                piece.seed = 'abcde'
+                piece.parts = [Part.new]
+
+                expect(piece.valid?).to be false
+            end
+
+            it 'reads an empty piece' do
+                src = File.join(__dir__, 'data', 'empty_piece.rb')
+                data = File.open(src).read
+                piece = eval(data, ConfigReader.get_binding)
+
+                expect(piece.valid?).to be false
+                expect(piece.title).to eql 'untitled'
+                expect(piece.tempo).to eql 90
+                expect(piece.seed).to be_nil
+                expect(piece.parts).to be_empty
+            end
+
+            it 'reads a complete piece' do
+                src = File.join(__dir__, 'data', 'complete_piece.rb')
+                data = File.open(src).read
+                piece = eval(data, ConfigReader.get_binding)
+
+                expect(piece.valid?).to be true
+                expect(piece.title).to eql 'Compelte Piece'
+                expect(piece.tempo).to eql 120
+                expect(piece.seed).to eql 12345
+                expect(piece.parts.length).to eql 2
+            end
+        end
+
     end
 end

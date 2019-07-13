@@ -57,7 +57,7 @@ module Markov
         end
 
         expect(counts.keys).to eq %i[a b c]
-        expect(counts.values.sum).to eq 10000
+        expect(counts.values.reduce(:+)).to eq 10000
         expect(counts[:a]).to be_within(50).of(3333) # arbitrary bounds
         expect(counts[:b]).to be_within(50).of(3333)
         expect(counts[:c]).to be_within(50).of(3333)

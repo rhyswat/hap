@@ -7,6 +7,10 @@ module Config
     # DSL helper
     # -----------------------------------------------------------------
     class ConfigReader
+        def self.piece(&block)
+            Docile.dsl_eval(PieceBuilder.new, &block).build
+        end
+        
         def self.part(&block)
             Docile.dsl_eval(PartBuilder.new, &block).build
         end
@@ -31,13 +35,31 @@ module Config
     #
     # Builders
     # -----------------------------------------------------------------
+    class PieceBuilder
+        def initialize
+            @piece = Piece.new
+        end
+
+        def title(v) @piece.title = v; self; end
+        def tempo(v) @piece.tempo = v.to_i; self; end
+        def seed(v) @piece.seed = v.to_i; self; end
+
+        def part(&block)
+            @piece.parts << ConfigReader.part(&block)
+            self
+        end
+
+        def build
+            @piece
+        end
+    end
+
     class PartBuilder
         def initialize
             @part = Part.new
         end
 
-        def title(v) @part.title = v; self; end
-        def tempo(v) @part.tempo = v.to_i; self; end
+        def name(v) @part.name = v; self; end
 
         def clip(&block)
             c = ConfigReader.clip(&block)
@@ -106,12 +128,42 @@ module Config
     #
     # DSL components
     # -----------------------------------------------------------------
-    class Part
-        attr_accessor :title, :tempo, :clips, :transitions
+    class Piece
+        attr_accessor :title, :tempo, :seed, :parts
 
-        def initialize()
+        def initialize
             @title = 'untitled'
             @tempo = 90
+            @seed = nil # or a random number seed
+            @parts = []
+        end
+
+        def valid?
+            errors.empty?
+        end
+
+        def errors
+            error_list = []
+
+            # have basics
+            error_list << "Untitled piece" if @title.nil? || @title.length == 0
+            error_list << "#{@title}: invalid tempo #{@tempo}" unless @tempo > 0
+            error_list << "#{@title}: no parts" if @parts.empty?
+            error_list << "#{@title}: seed should be a number" unless @seed.nil? || (@seed.is_a? Integer)
+
+
+            # part errors
+            error_list += @parts.map { |p| p.errors }.flatten
+
+            error_list
+        end
+    end
+
+    class Part
+        attr_accessor :name, :clips, :transitions
+
+        def initialize()
+            @name = 'untitled'
             @clips = {}
             @transitions = []
         end
@@ -124,11 +176,7 @@ module Config
             error_list = []
 
             # empty part is useless
-            error_list << "Empty part" if @clips.empty? && @transitions.empty?
-
-            # have a tempo & title
-            error_list << "Invalid tempo: #{@tempo}" unless @tempo > 0
-            error_list << "Untitled part" if @title.nil? || @title.length == 0
+            error_list << "#{@name}: empty part" if @clips.empty? && @transitions.empty?
 
             # transitions from x -> * sum to 1
             tx = @transitions.reduce({}) do |store, transition|
@@ -136,16 +184,16 @@ module Config
                 store[transition.from] = store[transition.from] + transition.probability
                 store
             end
-            tx.select { |k,v| v < 0.9999}.each { |k,v| error_list << "Transitions for #{k} sum to #{v}"}
+            tx.select { |k,v| v < 0.9999}.each { |k,v| error_list << "#{@name}: transitions for #{k} sum to #{v}"}
 
             # clips are all used
             froms = Set.new @transitions.map {|t| t.from }
             tos = Set.new @transitions.map {|t| t.to }
             clip_keys = Set.new @clips.keys
             unused_clips = (clip_keys - froms) - tos
-            unused_clips.each { |c| error_list << "Unused clip #{c}" }
-            (froms - clip_keys).each  { |c| error_list << "Transition 'from' without clip: #{c}" }
-            (tos - clip_keys).each  { |c| error_list << "Transition 'to' without clip: #{c}" }
+            unused_clips.each { |c| error_list << "#{@name}: unused clip #{c}" }
+            (froms - clip_keys).each  { |c| error_list << "#{@name}: transition 'from' without clip: #{c}" }
+            (tos - clip_keys).each  { |c| error_list << "#{@name}: transition 'to' without clip: #{c}" }
 
             error_list
         end

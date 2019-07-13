@@ -1,6 +1,5 @@
 part {
-    title 'Part #7'
-    tempo 120
+    name 'Part #7'
 
     clip {
         label 'c1'

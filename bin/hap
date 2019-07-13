@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-puts 'Helo bobol'
+require 'hap'
+
+main = Hap::Hap.new
+main.convert_to_midi('test.md')
