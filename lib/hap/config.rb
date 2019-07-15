@@ -42,52 +42,49 @@ module Hap
 
         def title(v) @piece.title = v; self; end
         def tempo(v) @piece.tempo = v.to_i; self; end
-        def repetitions(v) @piece.repetitions = v.to_i; self; end
         def seed(v) @piece.seed = v.to_i; self; end
-
+        
         def part(&block)
             @piece.parts << ConfigReader.part(&block)
             self
         end
-
+        
         def build
             @piece
         end
     end
-
+    
     class PartBuilder
         def initialize
             @part = Part.new
         end
-
+        
         def name(v) @part.name = v; self; end
-
+        def repetitions(v) @part.repetitions = v.to_i; self; end
+        
         def clip(&block)
             c = ConfigReader.clip(&block)
             @part.clips[c.label] = c
             self
         end
-
+        
         def transition(&block)
             @part.transitions << ConfigReader.transition(&block)
             self
         end
-
+        
         def build 
             @part 
         end
     end
-
+    
     class ClipBuilder
         def initialize
             @clip = Clip.new
         end
-
-        def label(v)
-            @clip.label = v.to_sym
-            self
-        end
-
+        
+        def label(v) @clip.label = v.to_sym; self; end
+        
         def event(&block)
             @clip.events << ConfigReader.event(&block)
             self
@@ -135,7 +132,6 @@ module Hap
         def initialize
             @title = 'untitled'
             @tempo = 90 # beats per minute
-            @repetitions = 0 # there will be this many clips in the output
             @seed = nil # or a random number seed
             @parts = []
         end
@@ -153,7 +149,6 @@ module Hap
             error_list << "#{@title}: no parts" if @parts.empty?
             error_list << "#{@title}: seed should be a number" unless @seed.nil? || (@seed.is_a? Integer)
 
-
             # part errors
             error_list += @parts.map { |p| p.errors }.flatten
 
@@ -162,12 +157,13 @@ module Hap
     end
 
     class Part
-        attr_accessor :name, :clips, :transitions
+        attr_accessor :name, :clips, :transitions, :repetitions
 
         def initialize()
             @name = 'untitled'
             @clips = {}
             @transitions = []
+            @repetitions = 0
         end
 
         def valid?
@@ -179,6 +175,7 @@ module Hap
 
             # empty part is useless
             error_list << "#{@name}: empty part" if @clips.empty? && @transitions.empty?
+            error_list << "#{@name}: no repetitions" if @repetitions == 0
 
             # transitions from x -> * sum to 1
             tx = @transitions.reduce({}) do |store, transition|

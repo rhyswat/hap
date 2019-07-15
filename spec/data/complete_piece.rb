@@ -5,7 +5,8 @@ piece {
 
     part {
         name 'Part #6'
-    
+        repetitions 6
+
         clip {
             label 'c1'
             event {
@@ -49,7 +50,8 @@ piece {
 
     part {
         name 'Part #7'
-    
+        repetitions 16
+
         clip {
             label 'c1'
             event {

@@ -128,6 +128,8 @@ module Hap
                 expect(piece.tempo).to eql 120
                 expect(piece.seed).to eql 12345
                 expect(piece.parts.length).to eql 2
+                expect(piece.parts[0].repetitions).to eql 6
+                expect(piece.parts[1].repetitions).to eql 16
             end
         end
 

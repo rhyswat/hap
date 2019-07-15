@@ -25,7 +25,7 @@ module Hap
         mapping
     end
 
-    NOTES = [0,1,2,3,4,5,6,7,8].reduce({}) { |final, n | final.merge self.octave(n) }.freeze
+    NOTES = (0..8).reduce({}) { |final, n | final.merge self.octave(n) }.freeze
 
     # Fixed mapping of music dynamics to midi velocities
     DYNAMICS = {

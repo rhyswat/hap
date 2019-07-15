@@ -1,5 +1,6 @@
 part {
     name 'Part #7'
+    repetitions 1
 
     clip {
         label 'c1'

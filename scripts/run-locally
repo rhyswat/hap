@@ -2,7 +2,11 @@
 
 # Run from local lib, not the installed bin/ script
 DIR = File.dirname(__FILE__)
-LIB = File.join(DIR, '..', 'lib', 'hap.rb')
+LIB = File.expand_path File.join(DIR, '..', 'lib', 'hap.rb')
 require LIB
 
-Hap.main *ARGV
+begin
+    Hap.main File.basename(__FILE__)
+rescue => e
+    puts e.backtrace
+end

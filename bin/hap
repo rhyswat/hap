@@ -3,9 +3,7 @@
 require 'hap'
 
 begin
-    Hap.main *ARGV
+    Hap.main File.basename(__FILE__)
 rescue => exception
     puts exception
-    puts ""
-    Hap.usage File.basename(__FILE__)
 end

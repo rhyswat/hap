@@ -47,7 +47,7 @@ module Hap
                 # keep adding clips until the time is filled
                 clip_label = nil
                 this_repetition = 0
-                while this_repetition < @config.repetitions do
+                while this_repetition < part.repetitions do
                     this_repetition += 1
                     clip_label, clip = next_clip(clip_label, part)
                     clip.events.each do |event|
@@ -55,10 +55,12 @@ module Hap
                         note_value = NOTES[event.note]
 
                         # dynamics / volume => midi velocity
-                        velocity = DYNAMICS[event.dynamic]
+                        v = event.dynamic || :mp
+                        velocity = DYNAMICS[v]
 
                         crotchet_length = seq.note_to_delta('quarter')
-                        duration = crotchet_length * DURATIONS[event.duration]
+                        d = event.duration || :crotchet
+                        duration = crotchet_length * DURATIONS[d]
 
                         track.events << MIDI::NoteOn.new(0, note_value, velocity, 0)
                         track.events << MIDI::NoteOff.new(0, note_value, velocity, duration.to_i)

@@ -1,17 +1,16 @@
 piece {
     title 'concert-a'
     tempo 100
-    repetitions 5
 
     part {
         name 'concert-a'
+        repetitions 5
 
         clip {
             label 'c1'
             event {
                 note 'a_4'
                 duration 'minim'
-                dynamic 'mp'
             }
         }
 
