@@ -1,0 +1,44 @@
+piece {
+    title 'rests'
+    tempo 80
+
+    part {
+        name 'concert-a'
+        repetitions 5
+
+        clip {
+            label 'c1'
+            event {
+                note 'a_4'
+                duration 'crotchet'
+            }
+            event {
+                note 'rest'
+                duration 'crotchet'
+            }
+        }
+
+        clip {
+            label 'c2'
+            event {
+                note 'd_4'
+                duration 'semiquaver'
+            }            
+            event {
+                note 'rest'
+                duration 'quaver'
+            }
+        }
+
+        transition {
+            from 'c1'
+            to 'c2'
+            probability 1
+        }
+        transition {
+            from 'c2'
+            to 'c1'
+            probability 1
+        }
+    }
+}

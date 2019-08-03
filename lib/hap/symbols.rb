@@ -25,10 +25,15 @@ module Hap
         mapping
     end
 
+     # 88-key piano
     NOTES = (0..8).reduce({}) { |final, n | final.merge self.octave(n) }.freeze
+
+    # surrogate note for a rest
+    REST = 1
 
     # Fixed mapping of music dynamics to midi velocities
     DYNAMICS = {
+        :rest => 0, # magic value
         :pp => 20,
         :p => 40,
         :mp => 60,

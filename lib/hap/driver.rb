@@ -52,12 +52,11 @@ module Hap
                     clip_label, clip = next_clip(clip_label, part)
                     clip.events.each do |event|
                         # note symbol => midi value
-                        note_value = NOTES[event.note]
+                        note_value = note_value(event)
 
                         # dynamics / volume => midi velocity
-                        v = event.dynamic || :mp
-                        velocity = DYNAMICS[v]
-
+                        velocity = note_velocity(event)
+                        
                         crotchet_length = seq.note_to_delta('quarter')
                         d = event.duration || :crotchet
                         duration = crotchet_length * DURATIONS[d]
@@ -91,6 +90,14 @@ module Hap
             next_label = @markov_chain.next_node current_clip_label
             return next_label, part.clips[next_label]
         end
-    
+
+        def note_value(event)
+            return :rest == event.note ? REST : NOTES[event.note]
+        end
+
+        def note_velocity(event)
+            return 0 if :rest == event.note || :rest == event.dynamic
+            return DYNAMICS[event.dynamic || :mp]
+        end
     end
 end
